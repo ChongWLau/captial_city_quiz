@@ -1,0 +1,9 @@
+
+<legend><h1> What is the capital city of {{country}}? </h1></legend>
+<form action="/quiz/result/" method="post">
+    {% csrf_token %}
+    <label for="your_guess">Your guess: </label>
+    <input id="your_guess" type="text" name="your_guess" value="E.g. London">
+    <input type="hidden" id="capital" type="text" name="capital" value="{{capital}}">
+    <input type="submit" value="Submit">
+</form>
