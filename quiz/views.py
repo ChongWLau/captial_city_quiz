@@ -7,6 +7,9 @@ import requests
 def guess(request):
     
     resp = requests.get('https://countriesnow.space/api/v0.1/countries/capital')
+    if resp.status_code >= 300:
+        return HttpResponse('Error retrieving data, please try again later!')
+    
     country_list = resp.json()['data']
     random_country = random.choice(country_list)
     
@@ -27,7 +30,7 @@ def result(request):
     
     resp = f"You were correct! {guess} was the right answer!"
     if not answer.lower() == guess.lower():
-        resp = f"The correct answer was actually {answer}."
+        resp = f"{guess} was wrong! The correct answer was actually {answer}."
     
     context = {'resp': resp,}
     
