@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.guess, name='guess'),
-    path('result/', views.result, name='result')
+    path('result/<str:country>/<str:guess>/', views.result, name='result')
 ]

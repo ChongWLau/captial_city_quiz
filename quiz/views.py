@@ -1,37 +1,44 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 import random
-import requests
+from quiz.models import Quiz
+from quiz.forms import QuizForm
 
 # Create your views here.
 def guess(request):
     
-    resp = requests.get('https://countriesnow.space/api/v0.1/countries/capital')
-    if resp.status_code >= 300:
-        return HttpResponse('Error retrieving data, please try again later!')
+    if request.method == "POST":
+        form = QuizForm(request.POST)
+        
+        if form.is_valid():
+            return HttpResponseRedirect(
+                reverse("result", kwargs=form.cleaned_data)
+            )
     
-    country_list = resp.json()['data']
+    country_list = Quiz.objects.all()
     random_country = random.choice(country_list)
     
     context = {
-        'country': random_country['name'],
-        'capital': random_country['capital'],
+        "country": random_country.country,
+        "form": QuizForm({
+            "country": random_country.country,
+            "guess": "E.g. London"
+        })
     }
-    return render(request, 'quiz/guess.html', context)
+    return render(request, "quiz/guess.html", context)
 
 
-def result(request):
+def result(request, country, guess):
     
-    if not request.method == 'POST':
-        return HttpResponse("Sorry I didn't get your answer!")
-        
-    answer = str(request.POST['capital'])
-    guess = str(request.POST['your_guess'])
+    query = Quiz.objects.filter(country=country)
+    if len(query) > 1:
+        return HttpResponse('More than 1 country with that name')
     
-    resp = f"You were correct! {guess} was the right answer!"
-    if not answer.lower() == guess.lower():
-        resp = f"{guess} was wrong! The correct answer was actually {answer}."
+    answer = query[0].capital
     
-    context = {'resp': resp,}
+    resp = f"{guess} was wrong! The correct answer was actually {answer}."
+    if answer == guess:
+        resp = f"You were correct! {guess} was the right answer!"
     
-    return render(request, 'quiz/result.html', context)
+    return render(request, 'quiz/result.html', {'resp': resp})
