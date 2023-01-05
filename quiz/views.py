@@ -1,11 +1,12 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseServerError
+from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import render
 from django.urls import reverse
 import random
 from quiz.models import Quiz
 from quiz.forms import QuizForm
 
-# Create your views here.
+
 def guess(request):
     
     if request.method == "POST":
@@ -31,14 +32,11 @@ def guess(request):
 
 def result(request, country, guess):
     
-    query = Quiz.objects.filter(country=country)
-    if len(query) > 1:
-        return HttpResponse('More than 1 country with that name')
+    try:
+        quiz = Quiz.objects.get(country=country)
+    except MultipleObjectsReturned:
+        raise HttpResponseServerError("Mutiple countries with same name")
     
-    answer = query[0].capital
-    
-    resp = f"{guess} was wrong! The correct answer was actually {answer}."
-    if answer == guess:
-        resp = f"You were correct! {guess} was the right answer!"
+    resp = quiz.check_answer(guess)
     
     return render(request, 'quiz/result.html', {'resp': resp})

@@ -3,8 +3,5 @@
 <form action="/quiz/" method="post">
     {% csrf_token %}
     {{ form }}
-    {% comment %} <label for="your_guess">Your guess: </label>
-    <input id="your_guess" type="text" name="your_guess" value="E.g. London">
-    <input type="hidden" id="capital" type="text" name="capital" value="{{capital}}"> {% endcomment %}
     <input type="submit" value="Submit">
 </form>
