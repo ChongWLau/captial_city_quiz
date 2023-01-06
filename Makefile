@@ -10,5 +10,8 @@ load_db:
 clear_db:
 	python manage.py runscript clear_db
 
+test:
+	python manage.py test
+
 service:
 	python manage.py runserver

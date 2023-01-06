@@ -23,6 +23,7 @@ make load_db
 
 Note: for functional reasons, the countries with no capitals will be omitted from this load command.
 
+
 ## Running Locally
 
 Running the service
@@ -36,6 +37,16 @@ Access the quiz by clicking [here](http://127.0.0.1:8000/quiz/) or opening a new
 ```
 http://127.0.0.1:8000/quiz/
 ```
+
+
+## Testing
+
+To run tests
+
+```
+make test
+```
+
 
 ## Extra
 

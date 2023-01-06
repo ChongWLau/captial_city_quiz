@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponseServerError
+from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponseBadRequest
 from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import render
 from django.urls import reverse
@@ -19,7 +19,7 @@ def guess(request):
     
     country_list = Quiz.objects.all()
     if len(country_list) == 0:
-        raise HttpResponseServerError('No countries found in the database')
+        return HttpResponseServerError('Error: No countries found in the database')
     random_country = random.choice(country_list)
     
     context = {
@@ -37,7 +37,9 @@ def result(request, country, guess):
     try:
         quiz = Quiz.objects.get(country=country)
     except MultipleObjectsReturned:
-        raise HttpResponseServerError("Mutiple countries with same name")
+        return HttpResponseServerError("Error: Mutiple countries with same name")
+    except Quiz.DoesNotExist:
+        return HttpResponseBadRequest("Error: Country was not found")
     
     resp = quiz.check_answer(guess)
     
