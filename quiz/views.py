@@ -13,6 +13,13 @@ def guess(request):
         form = QuizForm(request.POST)
         
         if form.is_valid():
+            try:
+                Quiz.objects.get(country=form.cleaned_data['country'])
+            except MultipleObjectsReturned:
+                return HttpResponseServerError("Error: Mutiple countries with same name")
+            except Quiz.DoesNotExist:
+                return HttpResponseBadRequest("Error: Country was not found")
+            
             return HttpResponseRedirect(
                 reverse("result", kwargs=form.cleaned_data)
             )

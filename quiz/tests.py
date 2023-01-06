@@ -29,6 +29,11 @@ class QuizTestCase(TestCase):
         response = guess(request)
         self.assertEqual(response.status_code, 302)
     
+    def test_quiz_view_bad_request(self):
+        request = self.factory.post('quiz', {'country': 'Utopia', 'guess': 'Birnin Zana'})
+        response = guess(request)
+        self.assertEqual(response.status_code, 400)
+
     def test_incorrect_result_view(self):
         request = self.factory.get('quiz/result/Wakanda/Forever')
         response = result(request, 'Wakanda', 'Forever')
@@ -43,13 +48,19 @@ class QuizTestCase(TestCase):
         request = self.factory.get('quiz/result/Utopia/Birnin Zana')
         response = result(request, 'Utopia', 'Birnin Zana')
         self.assertEqual(response.status_code, 400)
-    
+
+    def test_quiz_view_duplicate_country(self):
+        Quiz.objects.create(country="Wakanda", capital="Forever")
+        request = self.factory.post('quiz', {'country': 'Wakanda', 'guess': 'Birnin Zana'})
+        response = guess(request)
+        self.assertEqual(response.status_code, 500)
+
     def test_result_view_duplicate_country(self):
         Quiz.objects.create(country="Wakanda", capital="Forever")
         request = self.factory.get('quiz/result/Wakanda/Birnin Zana')
         response = result(request, 'Wakanda', 'Birnin Zana')
         self.assertEqual(response.status_code, 500)
-    
+
     def test_quiz_view_no_data(self):
         Quiz.objects.all().delete()
         request = self.factory.get('quiz')
