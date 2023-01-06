@@ -15,11 +15,13 @@ Install requirements
 make install
 ```
 
-Load the database with countries and their capitals
+Load the database with countries and their capitals (will also clear any old data beforehand)
 
 ```
 make load_db
 ```
+
+Note: for functional reasons, the countries with no capitals will be omitted from this load command.
 
 ## Running Locally
 
@@ -33,4 +35,12 @@ Access the quiz by clicking [here](http://127.0.0.1:8000/quiz/) or opening a new
 
 ```
 http://127.0.0.1:8000/quiz/
+```
+
+## Extra
+
+If you want to clear the database at any point
+
+```
+make clear_db
 ```

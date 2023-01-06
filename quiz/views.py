@@ -18,6 +18,8 @@ def guess(request):
             )
     
     country_list = Quiz.objects.all()
+    if len(country_list) == 0:
+        raise HttpResponseServerError('No countries found in the database')
     random_country = random.choice(country_list)
     
     context = {

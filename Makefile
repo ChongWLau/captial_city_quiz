@@ -7,5 +7,8 @@ install:
 load_db:
 	python manage.py runscript load_db
 
+clear_db:
+	python manage.py runscript clear_db
+
 service:
 	python manage.py runserver

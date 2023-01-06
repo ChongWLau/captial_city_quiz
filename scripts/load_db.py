@@ -12,5 +12,7 @@ def run():
     country_list = resp.json()['data']
     
     for country in country_list:
+        if country['capital'] == '':
+            continue
         c = Quiz(country=country['name'], capital=country['capital'])
         c.save()
